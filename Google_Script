@@ -1,0 +1,102 @@
+function doGet(e) {
+  Logger.log(JSON.stringify(e));
+  var result = 'Ok';
+
+  // Check if the e parameter is defined and has properties
+  if (e && e.parameter !== undefined) {
+    var sheet_id = '1HkkIz4X-YHfau5-6q_fonffWNOVciomc-d2YK3x2rTs'; // Spreadsheet ID
+    var sheet = SpreadsheetApp.openById(sheet_id).getActiveSheet();
+    var newRow = sheet.getLastRow() + 1;
+    var rowData = [];
+
+    var Curr_Date = new Date();
+    rowData[0] = Curr_Date; // Date in column A
+    var Curr_Time = Utilities.formatDate(Curr_Date, 'Asia/Bangkok', 'HH:mm:ss');
+    rowData[1] = Curr_Time; // Time in column B
+
+    // Loop through each parameter in the request
+    for (var param in e.parameter) {
+      Logger.log('In for loop, param=' + param);
+      var value = stripQuotes(e.parameter[param]);
+      Logger.log(param + ':' + e.parameter[param]);
+
+      // Based on the parameter, assign the value to the corresponding column
+      switch (param) {
+        case 'Alcohol':
+          rowData[2] = value;
+          result = 'OK';
+          break;
+
+        case 'Benzene':
+          rowData[3] = value;
+          result += ', OK';
+          break;
+
+        case 'Hexane':
+          rowData[4] = value;
+          result += ', OK';
+          break;
+
+        case 'Methane':
+          rowData[5] = value;
+          result += ', OK';
+          break;
+
+        case 'Smoke':
+          rowData[6] = value;
+          result += ', OK';
+          break;
+
+        case 'Carbondioxide':
+          rowData[7] = value;
+          result += ', OK';
+          break;
+
+        case 'Toluene':
+          rowData[8] = value;
+          result += ', OK';
+          break;
+  
+        case 'Ammonia':
+          rowData[9] = value;
+          result += ', OK';
+          break;
+            
+        case 'Acetone':
+          rowData[10] = value;
+          result += ', OK';
+          break;
+    
+        case 'Carbonmonoxide':
+          rowData[11] = value;
+          result += ', OK';
+          break;
+              
+        case 'Hydrogen':
+          rowData[12] = value;
+          result += ', OK';
+          break;
+              
+        case 'Flaming_gas':
+          rowData[13] = value;
+          result += ', OK';
+          break;
+
+        default:
+          result = 'unsupported parameter';
+      }
+    }
+
+    Logger.log(JSON.stringify(rowData));
+    var newRange = sheet.getRange(newRow, 1, 1, rowData.length);
+    newRange.setValues([rowData]);
+  } else {
+    result = 'No Parameters';
+  }
+
+  return ContentService.createTextOutput(result);
+}
+
+function stripQuotes(value) {
+  return value.replace(/^["']|['"]$/g, '');
+}
